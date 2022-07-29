@@ -1,5 +1,8 @@
 module STSlib
+using LinearAlgebra
 
-# Write your package code here.
+export Seasonal
+
+include("models/seasonal.jl")
 
 end
