@@ -1,3 +1,8 @@
+"""
+
+    Seasonal(num_seasons, season_length, drift_scale)
+
+"""
 struct Seasonal
     obs::Matrix{Int64}
     trans::Matrix{Int64}
