@@ -41,14 +41,16 @@ y1  = F*x1                   # emit new observation
 For convenience the package provides a `simulate` function which can be used to to this iteratively.
 
 ```julia
+Random.seed!(1234)
 x0 = [1., 1.]  # initial state
 Σ = [0.01;;]   # observation noise covariance
 T = 10         # number of steps to simulate
 xs, ys = simulate(sts, T, x0, Σ)
 
-x_plt = scatter(xs', label=reshape(["x$i" for i in 1:size(xs, 1)], 1, :), title="State", legend=:topleft)
+labels = reshape(["x$i" for i in 1:size(xs, 1)], 1, :)
+x_plt = scatter(xs', label=labels, title="State", legend=:topleft)
 y_plt = scatter(ys', label=nothing, title="Observations")
-plot(x_plt, y_plt, layout=(2, 1), size=(600, 800))
+plot(x_plt, y_plt, layout=(2, 1))
 ```
 
 ![thing](figures/loclin.png)
@@ -64,7 +66,8 @@ slope_drift_scale = 0.5
 num_seasons = 4
 season_length = 3
 season_drift_scale = 1
-sts = Seasonal(num_seasons, season_length, season_drift_scale) + LocalLinear(level_drift_scale, slope_drift_scale)
+sts = Seasonal(num_seasons, season_length, season_drift_scale) +
+  LocalLinear(level_drift_scale, slope_drift_scale)
 
 # simulate as usual
 x0 = [10., 20., -10., -20, 1., 1.]
@@ -74,9 +77,10 @@ seasons = repeat(collect(1:num_seasons), inner=season_length, outer=num_occurenc
 T = length(seasons)
 xs, ys = simulate(sts, T, x0, Σ)
 
-x_plt = scatter(xs', label=reshape(["x$i" for i in 1:size(xs, 1)], 1, :), title="State", legend=:topleft)
+labels = reshape(["x$i" for i in 1:size(xs, 1)], 1, :)
+x_plt = scatter(xs', label=labels, title="State", legend=:topleft)
 y_plt = scatter(ys', color=seasons, label=nothing, title="Observations")
-plot(x_plt, y_plt, layout=(2, 1), size=(600, 800))
+plot(x_plt, y_plt, layout=(2, 1), size=(600, 600))
 ```
 
 ![thing](figures/loclin_seasonal.png)
