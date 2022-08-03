@@ -2,7 +2,30 @@
 
 [![Coverage](https://codecov.io/gh/SebastianCallh/STSlib.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/SebastianCallh/STSlib.jl)
 
-STSlib.jl provides primitives for constructing structural time series.
+STSlib.jl provides primitives for constructing structural time series models (STSs). 
+An STS is a model in which we can encode prior information,
+such as trends and seasonality, which can then be projected into the future to make forecasts.
+In a nutshell, this package contains functionality 
+to construct such models without having to care about the underlying linear algebra.
+
+
+## Mathematical details
+An STS (at least according to this package) is a model with a latent variable $x \in \mathcal{R}^M$ and an observed variable $y \in \mathcal{R}^N$ that evolve over discrete time steps according to 
+
+$$
+x_{t} = Fx_{t-1} + \eta_t, \eta_t \sim \mathcal{N}(0, Q_t)
+$$
+
+$$
+y_{t} = Hx_{t} + \sigma, \sigma \sim \mathcal{N}(0, P),
+$$
+
+where $F_t$ is an $M \times M$ *transition matrix* describing the transition of the state $x$,
+$Q_t$ an $M \times M$ covariance matrix capturing the uncertainty of the transition, 
+and $F$ an $N \times M$ *observation matrix* describing how observations $y$ are generated from $x$.
+Finally, $P$ is the covariance matrix or the observation noise.
+
+Constructing STSs boil down to designing $F_t$, $H_t$ $Q_t$ and this package aims to provide flexible tools for doing that without having to manually write down problem specific matrices.
 
 # Examples
 This section showcases package functionality with some code snippets.
