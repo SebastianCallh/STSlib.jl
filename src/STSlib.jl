@@ -1,7 +1,9 @@
 module STSlib
 using LinearAlgebra
+using GaussianDistributions
 
 export LocalLevel, LocalLinear, Seasonal, Sum 
+export simulate
 
 include("components/utils.jl")
 include("components/component.jl")
