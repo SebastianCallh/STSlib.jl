@@ -3,7 +3,7 @@ using LinearAlgebra
 
 export Seasonal, LocalLinear
 
-include("models/local_linear.jl")
-include("models/seasonal.jl")
+include("components/seasonal.jl")
+include("components/local_level.jl")
 
 end
