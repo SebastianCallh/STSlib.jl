@@ -1,7 +1,7 @@
 module STSlib
 using LinearAlgebra
 
-export Seasonal, LocalLinear
+export LocalLevel, LocalLinear, Seasonal, Sum 
 
 include("components/utils.jl")
 include("components/component.jl")
