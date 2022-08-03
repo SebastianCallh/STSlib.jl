@@ -61,7 +61,7 @@ x1 = rand(Gaussian(F*x0, Q)) # state transition
 y1  = F*x1                   # emit new observation
 ```
 
-For convenience the package provides a `simulate` function which can be used to to this iteratively.
+For convenience the package provides a `simulate` function which can be used to do this iteratively.
 
 ```julia
 Random.seed!(1234)
