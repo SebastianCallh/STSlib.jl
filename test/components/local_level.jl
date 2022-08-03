@@ -1,22 +1,23 @@
-@testset "local_linear" begin
+@testset "local_level" begin
 
     @testset "transition" begin
-        m = LocalLinear()
-        x = [1, 2]
+        m = LocalLevel()
+        x = [2]
         
         F, H, Q = m(1)
         x₁ = H*x
         y₁ = F*x₁
         @test only(y₁) == x₁[1] # observe level
-        @test x₁ == [3, 2]
+        @test x₁ == [2] # constant level
     end
 
     @testset "equality" begin
-        m1 = LocalLinear(1)
-        m2 = LocalLinear(2)
-        m3 = LocalLinear(1)
+        m1 = LocalLevel(1)
+        m2 = LocalLevel(2)
+        m3 = LocalLevel(1)
         @test m1 == m1
         @test m1 != m2
         @test m1 == m3
     end
+
 end
