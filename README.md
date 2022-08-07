@@ -17,7 +17,7 @@ x_{t} = Fx_{t-1} + \eta_t, \eta_t \sim \mathcal{N}(0, Q_t)
 $$
 
 $$
-y_{t} = Hx_{t} + \sigma, \sigma \sim \mathcal{N}(0, P),
+y_{t} = Hx_{t} + \epsilon, \epsilon \sim \mathcal{N}(0, P),
 $$
 
 where $F_t$ is an $M \times M$ *transition matrix* describing the transition of the state $x$,
