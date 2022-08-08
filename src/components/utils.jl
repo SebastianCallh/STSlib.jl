@@ -3,7 +3,7 @@
 
 Constructs a block diagonal matrix from `mats`.
 """
-function blockdiagonal(mats::Vector{Matrix{T}}) where T
+function blockdiagonal(mats::Vector{AbstractMatrix{T}}) where T
     M, N = mapreduce(size, .+, mats)
     res = zeros(T, M, N)
     cur_ind = CartesianIndex(0, 0)
@@ -15,6 +15,10 @@ function blockdiagonal(mats::Vector{Matrix{T}}) where T
         cur_ind += m_inds[end]
     end
     res
+end
+
+function blockdiagonal(mats::Vector{SparseMatrixCSC{T}}) where T 
+    sparse(blockdiagonal(Matrix.(mats)))
 end
 
 function blockdiagonal(mats::Vector{Diagonal{T, Vector{T}}}) where T

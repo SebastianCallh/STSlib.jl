@@ -1,5 +1,6 @@
 module STSlib
 using LinearAlgebra
+using SparseArrays
 using GaussianDistributions
 
 export LocalLevel, LocalLinear, Seasonal, Sum 

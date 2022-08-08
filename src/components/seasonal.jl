@@ -1,7 +1,7 @@
-struct Seasonal <: Component
-    obs::Matrix{Int64}
-    trans::Matrix{Int64}
-    trans_cov::Matrix{Float64}
+struct Seasonal{T <: AbstractFloat} <: Component
+    obs::SparseMatrixCSC{T}
+    trans::SparseMatrixCSC{T}
+    trans_cov::SparseMatrixCSC{T}
     season_length::Int64
 end
 
@@ -10,12 +10,16 @@ end
     Seasonal(num_seasons::Integer, season_length::Integer, drift_scale::Real)
 
 """
-Seasonal(num_seasons::Integer, season_length::Integer, drift_scale::Real) = begin
-    obs = Matrix(vcat(1, zeros(Int64, num_seasons-1))')
+function Seasonal(num_seasons::Integer, season_length::Integer, drift_scale::T) where T <: AbstractFloat
+    obs = Matrix(vcat(1, zeros(num_seasons-1))')
     trans = diagm(ones(num_seasons))[:,vcat(num_seasons, 1:num_seasons-1)]
     trans_cov = diagm(vcat(drift_scale^2, zeros(num_seasons-1)))
-    Seasonal(obs, trans, trans_cov, season_length)
+    Seasonal(sparse(T.(obs)), sparse(T.(trans)), sparse(T.(trans_cov)), season_length)
 end
+function Seasonal(num_seasons::Integer, season_length::Integer, drift_scale::Integer)
+    Seasonal(num_seasons, season_length, Float64(drift_scale))
+end
+
 latent_size(m::Seasonal) = size(m.obs, 2)
 observed_size(m::Seasonal) = size(m.obs, 1)
 Base.:(==)(c1::Seasonal, c2::Seasonal) = all([
