@@ -8,7 +8,6 @@ struct Sum <: Component
 end
 
 latent_size(m::Sum) = mapreduce(latent_size, +, m.components)
-observed_size(m::Sum) = mapreduce(observed_size, +, m.components)
 Base.length(m::Sum) = length(m.components)
 Base.:(==)(c1::Sum, c2::Sum) = all(c1.components .== c2.components)
 

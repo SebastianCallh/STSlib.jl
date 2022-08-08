@@ -23,7 +23,6 @@ function Seasonal(num_seasons::Integer, season_length::Integer, drift_scale::Int
 end
 
 latent_size(m::Seasonal) = size(m.obs, 2)
-observed_size(m::Seasonal) = size(m.obs, 1)
 Base.:(==)(c1::Seasonal, c2::Seasonal) = all([
     c1.obs == c2.obs,
     c1.trans == c2.trans,
