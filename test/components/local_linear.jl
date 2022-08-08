@@ -12,8 +12,8 @@
     end
 
     @testset "equality" begin
-        m1 = LocalLinear(1)
-        m2 = LocalLinear(2)
+        m1 = LocalLinear(1, 1)
+        m2 = LocalLinear(2, 1)
         m3 = LocalLinear(1)
         @test m1 == m1
         @test m1 != m2
