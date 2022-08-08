@@ -33,4 +33,11 @@
         @test m1 != m4
         @test m1 == m5
     end
+    
+    @testset "size" begin
+        num_seasons = 5
+        m = Seasonal(num_seasons, 2, 1)
+        @test latent_size(m) == num_seasons
+        @test observed_size(m) == 1
+    end
 end

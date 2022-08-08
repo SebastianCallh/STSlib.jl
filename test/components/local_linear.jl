@@ -19,4 +19,10 @@
         @test m1 != m2
         @test m1 == m3
     end
+
+    @testset "size" begin
+        m = LocalLinear(1)
+        @test latent_size(m) == 2
+        @test observed_size(m) == 1
+    end
 end
