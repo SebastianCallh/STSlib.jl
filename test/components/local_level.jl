@@ -20,4 +20,8 @@
         @test m1 == m3
     end
 
+    @testset "size" begin
+        m = LocalLevel(1)
+        @test latent_size(m) == 1
+    end
 end

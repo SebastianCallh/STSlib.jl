@@ -1,5 +1,6 @@
 abstract type Component end
 
+Base.:(+)(c1::Component, c2::Component) = Sum([c1, c2])
 """
     simulate(model::Component, T, x, σ)
 

@@ -12,11 +12,16 @@
     end
 
     @testset "equality" begin
-        m1 = LocalLinear(1)
-        m2 = LocalLinear(2)
+        m1 = LocalLinear(1, 1)
+        m2 = LocalLinear(2, 1)
         m3 = LocalLinear(1)
         @test m1 == m1
         @test m1 != m2
         @test m1 == m3
+    end
+
+    @testset "size" begin
+        m = LocalLinear(1)
+        @test latent_size(m) == 2
     end
 end

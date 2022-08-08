@@ -18,7 +18,6 @@ function LocalLevel(level_scale::Integer)
 end
 
 latent_size(m::LocalLevel) = size(m.obs, 2)
-observed_size(m::LocalLevel) = size(m.obs, 1)
 Base.:(==)(c1::LocalLevel, c2::LocalLevel) = all([
     c1.obs == c2.obs,
     c1.trans == c2.trans,

@@ -3,7 +3,7 @@ using LinearAlgebra
 using GaussianDistributions
 
 export LocalLevel, LocalLinear, Seasonal, Sum 
-export latent_size, observed_size
+export latent_size
 export simulate
 
 include("components/utils.jl")
