@@ -4,17 +4,17 @@
         drift_scale = 0.1
         num_seasons = 4
         season_length = 2
-        sts = Seasonal(num_seasons, season_length, drift_scale)
-        x = collect(1:4)
+        m = Seasonal(num_seasons, season_length, drift_scale)
+        x = Float64.(collect(1:4))
         
-        F₁, H₁, Q₁ = sts(season_length+1)
+        F₁, H₁, Q₁ = m(x, season_length+1)
         x₁ = H₁*x
         y₁ = F₁*x₁
         @test only(y₁) == x₁[1] # observe first effect
         @test x₁ == x[[2, 3, 4, 1]] # cycle seasons
         @test diag(Q₁) == vcat(drift_scale.^2, zeros(num_seasons-1)) # new season => drift scale
         
-        F₂, H₂, Q₂ = sts(season_length)
+        F₂, H₂, Q₂ = m(x, season_length)
         x₂ = H₂*x₁
         y₂ = F₂*x₂
         @test x₂ == x₁ # do not cycle seasons
