@@ -1,21 +1,22 @@
 @testset "sum" begin
+    
     @testset "construction" begin
         c₁ = LocalLevel()
         c₂ = LocalLevel()
-        m₁ = c₁ + c₂
-        m₂ = Sum([c₁, c₂])
+        m = c₁ + c₂
 
-        @test m₁ == m₂
+        @test m.components[1] == c₁
+        @test m.components[2] == c₂
     end
 
     @testset "transition" begin
         m = LocalLevel() + Seasonal(2, 1, 1)
-        x = [1, 2, 0]
-        F, H, Q = m(1)
+        x = [1., 2., 0.]
+        F, H, Q = m(x, 1)
         x₁ = H*x
         y₁ = F*x₁
         @test only(y₁) == x₁[1] + x₁[2] # observe level plus season effect
-        @test x₁ == [1, 2, 0] # constant state        
+        @test x₁ == x # constant state        
     end
 
     @testset "equality" begin

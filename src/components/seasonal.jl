@@ -1,4 +1,4 @@
-struct Seasonal{T <: AbstractFloat}  <: Component
+struct Seasonal{T} <: Component{T}
     obs::Matrix{T}
     trans::Matrix{T}
     trans_cov::Matrix{T}
@@ -31,7 +31,7 @@ Base.:(==)(c1::Seasonal, c2::Seasonal) = all([
 ])
 
 
-function (m::Seasonal)(t::Integer)
+function (m::Seasonal{T})(x::Vector{T}, t::Integer) where T
    num_seasons = size(m.trans, 1)
    new_season = mod(t-1, m.season_length) == 0 && 1 < t   
    trans = new_season ? m.trans : diagm(ones(eltype(m.trans), num_seasons))

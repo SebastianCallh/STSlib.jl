@@ -2,13 +2,13 @@
 
     @testset "transition" begin
         m = LocalLinear()
-        x = [1, 2]
+        x = [1., 2.]
         
-        F, H, Q = m(1)
+        F, H, Q = m(x, 1)
         x₁ = H*x
         y₁ = F*x₁
         @test only(y₁) == x₁[1] # observe level
-        @test x₁ == [3, 2]
+        @test x₁ == [3., 2.]
     end
 
     @testset "equality" begin

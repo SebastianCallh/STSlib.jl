@@ -2,11 +2,11 @@
 
     @testset "transition" begin
         m = LocalLevel()
-        x = [2]
+        x = [2.]
         
-        F, H, Q = m(1)
-        x₁ = H*x
-        y₁ = F*x₁
+        H, F, Q = m(x, 1)
+        x₁ = F*x
+        y₁ = H*x₁
         @test only(y₁) == x₁[1] # observe level
         @test x₁ == [2] # constant level
     end

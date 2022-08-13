@@ -1,6 +1,7 @@
-abstract type Component end
+abstract type Component{T <: AbstractFloat} end
 
-Base.:(+)(c1::Component, c2::Component) = Sum([c1, c2])
+Base.:(+)(c1::Component{T}, c2::Component{T}) where T = Sum{T}([c1, c2])
+
 """
     simulate(model::Component, T, x, σ)
 

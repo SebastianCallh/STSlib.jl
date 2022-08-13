@@ -1,4 +1,4 @@
-struct LocalLinear{T <: AbstractFloat} <: Component
+struct LocalLinear{T} <: Component{T}
     obs::Matrix{T}
     trans::Matrix{T}
     trans_cov::Matrix{T}
@@ -24,6 +24,6 @@ Base.:(==)(c1::LocalLinear, c2::LocalLinear) = all([
     c1.trans_cov == c2.trans_cov,
 ])
 
-function (m::LocalLinear)(t::Integer)
+function (m::LocalLinear{T})(x::Vector{T}, t::Integer) where T
     m.obs, m.trans, m.trans_cov
 end
