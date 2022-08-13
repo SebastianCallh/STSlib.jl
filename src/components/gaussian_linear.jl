@@ -13,6 +13,7 @@ struct GaussianLinear{T} <: Component{T}
 end
 
 latent_size(c::GaussianLinear) = size(c.H, 2)
+num_params(c::GaussianLinear) = 0
 Base.:(==)(c1::GaussianLinear, c2::GaussianLinear) = all([
     c1.H == c2.H,
     c1.F == c2.F,
@@ -22,4 +23,4 @@ Base.:(==)(c1::GaussianLinear, c2::GaussianLinear) = all([
 function (c::GaussianLinear{T})(x::Vector{T}, t::Integer) where T
     (;H, F, Q) = c
     return H, F, Q
-end    
+end
