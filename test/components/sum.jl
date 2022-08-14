@@ -12,10 +12,8 @@
     @testset "transition" begin
         m = LocalLevel() + Seasonal(2, 1, 1)
         x = [1., 2., 0.]
-        F, H, Q = m(x, 1)
-        x₁ = H*x
-        y₁ = F*x₁
-        @test only(y₁) == x₁[1] + x₁[2] # observe level plus season effect
+        x₁, y₁ = m(x, 1)
+        @test y₁ == x₁[1] + x₁[2] # observe level plus season effect
         @test x₁ == x # constant state        
     end
 

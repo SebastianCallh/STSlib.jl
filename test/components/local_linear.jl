@@ -4,9 +4,7 @@
         m = LocalLinear()
         x = [1., 2.]
         
-        F, H, Q = m(x, 1)
-        x₁ = H*x
-        y₁ = F*x₁
+        x₁, y₁ = m(x, 1)
         @test only(y₁) == x₁[1] # observe level
         @test x₁ == [3., 2.]
     end

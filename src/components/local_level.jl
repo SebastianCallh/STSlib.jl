@@ -19,6 +19,24 @@ latent_size(c::LocalLevel) = latent_size(c.model)
 num_params(c::LocalLevel) = 0
 Base.:(==)(c1::LocalLevel, c2::LocalLevel) = c1.model == c2.model
 
-function (c::LocalLevel{T})(x::Vector{T}, args...) where T
-    return c.model(x, args...)
+@doc raw"""
+
+    function (c::LocalLevel{T})(x::Vector{T}, args...) where T
+
+Deterministic transition of state $x$.
+
+"""
+function (c::LocalLevel{T})(args...) where T
+    return c.model(args...)
+end
+
+@doc raw"""
+
+    function (c::LocalLevel{T})(x::Vector{T}, P::Matrix{T}, args...) where T
+
+Probabilistic transition of state with mean $x$ and covariance matrix $P$.
+
+"""
+function (c::LocalLevel{T})(args...) where T
+    return c.model(args...)
 end

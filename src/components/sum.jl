@@ -15,12 +15,11 @@ Base.:(==)(c1::Sum, c2::Sum) = all(c1.components .== c2.components)
 
 function (m::Sum{T})(x::Vector{T}, args...) where T
     sizes = cumsum(latent_size.(m.components))
-    indices = collect(zip(vcat(1, sizes), sizes))
+    indices = collect(zip(vcat(0, sizes) .+ 1, sizes))
     xs = [x[i:j] for (i, j) in indices]
     results = [c(x, args...) for (c, x) in zip(m.components, xs)]
 
-    obs = mapreduce(r -> r[1], hcat, results)
-    trans = blockdiagonal([r[2] for r in results])
-    trans_cov = blockdiagonal([r[3] for r in results])
-    return obs, trans, trans_cov
+    x = reduce(vcat, [r[1] for r in results])
+    y = reduce(vcat, [r[2] for r in results])
+    return x, sum(y)
 end

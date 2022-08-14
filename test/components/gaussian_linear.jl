@@ -3,11 +3,8 @@
     @testset "transition" begin
         m = GaussianLinear([1. 0.;], diagm([1., 2.]), diagm([0.1, 0.1]))
         x = [1., 2.]
-        P = diagm([0.1, 0.1])
-        H, F, Q = m(x, 1)
-        x₁ = F*x
-        y₁ = H*x₁
-
+        
+        x₁, y₁ = m(x, 1)
         @test only(y₁) == x₁[1]
         @test x₁ == [1., 4.]
     end
