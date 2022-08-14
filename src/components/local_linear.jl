@@ -19,6 +19,6 @@ latent_size(c::LocalLinear) = latent_size(c.model)
 num_params(c::LocalLinear) = 0
 Base.:(==)(c1::LocalLinear, c2::LocalLinear) = c1.model == c2.model
 
-function (c::LocalLinear{T})(x::Vector{T}, t::Integer) where T
-    return c.model(x, t)
+function (c::LocalLinear{T})(x::Vector{T}, args...) where T
+    return c.model(x, args...)
 end

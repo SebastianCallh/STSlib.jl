@@ -19,7 +19,7 @@ Base.:(==)(c1::GaussianLinear, c2::GaussianLinear) = all([
     c1.Q == c2.Q,
 ])
 
-function (c::GaussianLinear{T})(x::Vector{T}, t::Integer) where T
+function (c::GaussianLinear{T})(x::Vector{T}, args...) where T
     (;H, F, Q) = c
     return H, F, Q
 end    

@@ -19,6 +19,6 @@ latent_size(c::LocalLevel) = latent_size(c.model)
 num_params(c::LocalLevel) = 0
 Base.:(==)(c1::LocalLevel, c2::LocalLevel) = c1.model == c2.model
 
-function (c::LocalLevel{T})(x::Vector{T}, t::Integer) where T
-    return c.model(x, t)
+function (c::LocalLevel{T})(x::Vector{T}, args...) where T
+    return c.model(x, args...)
 end
