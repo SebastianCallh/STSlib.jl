@@ -10,7 +10,7 @@ end
 
 """
 function Autoregressive(order::Integer, level_scale::T) where T
-    Autoregressive{T}([1;;], diagm([level_scale^2]), order)
+    Autoregressive{T}(hcat(1, zeros(T, order-1)'), diagm([level_scale^2]), order)
 end
 
 latent_size(c::Autoregressive) = c.order
@@ -21,16 +21,15 @@ Base.:(==)(c1::Autoregressive, c2::Autoregressive) = all([
     c1.order == c2.order,
 ])
 
-
 @doc raw"""
 
-    (m::Autoregressive{T})(x::Vector{T}, β::Vector{T}, t::Integer) where T
+    (m::Autoregressive{T})(x::Vector{T}, β::Vector{T}, args...) where T
 
-    Deterministic transition given state $x$, coefficients $\beta$ for time step t.
+    Deterministic transition given state $x$ and coefficients $\beta$.
 
 """
-function (m::Autoregressive{T})(x::Vector{T}, β::Vector{T}, t::Integer) where T
-    (;H, Q) = m
-    F = β'
-    return H, F, Q
+function (c::Autoregressive{T})(x::Vector{T}, β::Vector{T}, args...) where T
+    (;H) = c
+    x = vcat(β'*x, x[begin:end-1])
+    return x, H
 end 

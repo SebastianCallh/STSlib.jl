@@ -4,10 +4,10 @@
         m = Autoregressive(2, .1)
         x = [1., 2.]
         β = [2., 2.]
-        H, F, Q = m(x, β, 1)
-        x₁ = F*x
+        x₁, H = m(x, β, 1)
+        # x₁ = F*x
         y₁ = H*x₁
-        @test x₁ == β'*x
+        @test x₁ == vcat(β'*x, x[1:end-1])
         @test only(y₁) == x₁[1]
     end
 
