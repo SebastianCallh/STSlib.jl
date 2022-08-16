@@ -1,23 +1,45 @@
 @testset "seasonal" begin
 
-    @testset "transition" begin
+    @testset "transition deterministic" begin
         drift_scale = 0.1
         num_seasons = 4
         season_length = 2
         m = Seasonal(num_seasons, season_length, drift_scale)
         x = Float64.(collect(1:4))
         
-        x₁, H = m(x, season_length+1)
-        y₁ = observe(x₁, H)
+        x₁ = transition(m, x, season_length+1)
+        y₁ = observe(m, x₁)
         @test only(y₁) == x₁[1] # observe first effect
         @test x₁ == x[[2, 3, 4, 1]] # cycle seasons
-        # @test diag(Q₁) == vcat(drift_scale.^2, zeros(num_seasons-1)) # new season => drift scale
         
-        x₂, y₂ = m(x, season_length)
+        x₂ = transition(m, x, season_length)
+        y₂ = observe(m, x₂)
         @test x₂ == x # do not cycle seasons
-        # @test diag(Q₂) == zeros(num_seasons) # no new season => no drift scale
     end
     
+    @testset "transition probabilistic" begin
+        drift_scale = 0.1
+        num_seasons = 4
+        season_length = 2
+        m = Seasonal(num_seasons, season_length, drift_scale)
+        x = Float64.(collect(1:4))
+        P = diagm(ones(4))
+        R = [1.0;;]
+        x₁, P₁ = transition(m, x, P, season_length+1)
+        y₁, S₁ = observe(m, x₁, P₁, R)
+        @test only(y₁) == x₁[1] # observe first effect
+        @test x₁ == x[[2, 3, 4, 1]] # cycle seasons
+        @test P₁ == [1.01 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1]
+        @test S₁ == [2.01;;]
+
+        x₂, P₂ = transition(m, x, P, season_length)
+        y₂, S₂ = observe(m, x₂, P, R)
+        @test x₂ == x # do not cycle seasons
+        @test P₂ == [1.0 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1]
+        @test S₂ == [2.0;;]
+    end
+    
+
     @testset "equality" begin
         m1 = Seasonal(1, 1, 1)
         m2 = Seasonal(2, 1, 1)

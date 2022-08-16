@@ -19,47 +19,51 @@ Base.:(==)(c1::GaussianLinear, c2::GaussianLinear) = all([
 
 @doc raw"""
 
-    function (c::GaussianLinear{T})(x::Vector{T}, t::Integer) where T
+    function observe(c::GaussianLinear{T}, x::Vector{T}) where T
 
-Deterministic transition of state $x$.
+Deterministic observation of state $x$.
 
 """
-function (c::GaussianLinear{T})(x::Vector{T}, args...) where T
-    (;F, H) = c
-    x = transition(x, F)
-    #y = observe(x, H)
-    return x, H # y
+function observe(c::GaussianLinear{T}, x::Vector{T}) where T
+    (;H) = c
+    return H*x
 end
 
 @doc raw"""
 
-    function (c::GaussianLinear{T})(x::Vector{T}, t::Integer) where T
+    function observe(c::GaussianLinear{T}, x::Vector{T}, P::Matrix{T}, R::Matrix{T}) where T
 
-Probabilistic transition of state with mean $x$ and covariance $P$.
+Probabilistic observation of state with mean $x$, covariance $P$ and observation noise covariance $R$.
 
 """
-function (c::GaussianLinear{T})(x::Vector{T}, P::Matrix{T}, args...) where T
-    (;H, F, Q) = c
-    x, P = transition(x, P, F, Q)
-    #y, S = observe(x, P, H, R)
-    return x, P, H # y, S
-end
-
-function observe(x, H)
-    return H*x
-end
-
-function observe(x, P, H, R)
+function observe(c::GaussianLinear{T}, x::Vector{T}, P::Matrix{T}, R::Matrix{T}) where T
+    (;H) = c
     y = H*x
     S = H*P*H' + R
     return y, S
 end
 
-function transition(x, F)
+@doc raw"""
+
+    function transition(c::GaussianLinear{T}, x::Vector{T}) where T
+
+Deterministic transition of state $x$.
+
+"""
+function transition(c::GaussianLinear{T}, x::Vector{T}) where T
+    (;F) = c
     return F*x
 end
 
-function transition(x, P, F, Q)
+@doc raw"""
+
+    function transition(c::GaussianLinear{T}, x::Vector{T}, P::Matrix{T}) where T
+
+Probabilistic transition of state with mean $x$ and covariance $P$.
+
+"""
+function transition(c::GaussianLinear{T}, x::Vector{T}, P::Matrix{T}) where T
+    (;F, Q) = c
     x = F*x
     P = F*P*F' + Q
     return x, P

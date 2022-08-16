@@ -5,6 +5,12 @@ Sum{T(components::Vector{Component{T}}) where T <: AbstractFloat
 """
 struct Sum{T} <: Component{T}
     components::Vector{Component{T}}
+    H::Matrix{T}
+end
+
+function Sum(components::Vector{Component{T}}) where T    
+    H = reduce(hcat, [c.H for c in components])
+    return Sum{T}(components, H)
 end
 
 latent_size(m::Sum) = reduce(+, latent_size.(m.components))
@@ -30,29 +36,70 @@ function _chunk(x::T, sizes) where T <: AbstractMatrix
     return chunks
 end
 
-function (m::Sum{T})(x::Vector{T}, t::Integer) where T
-    sizes = latent_size.(m.components)
-    xs = _chunk(x, sizes)
-    results = [c(x, t) for (c, x) in zip(m.components, xs)]
+@doc raw"""
 
-    x = reduce(vcat, [r[1] for r in results])
-    H = reduce(hcat, [r[2] for r in results])
-    # y = observe(x, H)
-    # y = reduce(vcat, [r[2] for r in results])
-    return x, H
+    function observe(c::Sum{T}, x::Vector{T}) where T
+
+Deterministic observation of state $x$.
+
+"""
+function observe(c::Sum{T}, x::Vector{T}) where T
+    (;H) = c
+    return H*x
 end
 
-function (m::Sum{T})(x::Vector{T}, P::Matrix{T}, t::Integer) where T
-    sizes = latent_size.(m.components)
+@doc raw"""
+
+    function observe(c::Sum{T}, x::Vector{T}, P::Matrix{T}, R::Matrix{T}) where T
+
+Probabilistic observation of state with mean $x$, covariance $P$ and observation noise covariance $R$.
+
+"""
+function observe(c::Sum{T}, x::Vector{T}, P::Matrix{T}, R::Matrix{T}) where T
+    (;H) = c
+    y = H*x
+    S = H*P*H' + R
+    return y, S
+end
+
+@doc raw"""
+
+    function transition(c::Sum{T}, x::Vector{T}, t::Integer) where T
+
+Deterministic transition of state $x$ for time step $t$.
+The time step parameter $t$ is forwarded to time dependant components.
+
+"""
+function transition(c::Sum{T}, x::Vector{T}, t::Integer) where T
+    sizes = latent_size.(c.components)
+    xs = _chunk(x, sizes)
+    x = reduce(vcat, call.(c.components, xs, Ref(t)))
+    return x
+end
+
+@doc raw"""
+
+    function transition(c::Sum{T}, x::Vector{T}, P::Matrix{T}) where T
+
+Probabilistic transition of state with mean $x$ and covariance $P$ for time step $t$.
+The time step parameter $t$ is forwarded to time dependant components.
+
+"""
+function transition(c::Sum{T}, x::Vector{T}, P::Matrix{T}, t::Integer) where T
+    sizes = latent_size.(c.components)
     xs = _chunk(x, sizes)
     Ps = _chunk(P, sizes)
-    results = [c(x, P, t) for (c, x, P) in zip(m.components, xs, Ps)]
-
+    results = reduce(vcat, call.(c.components, xs, Ps, Ref(t)))
     x = reduce(vcat, [r[1] for r in results])
     P = blockdiagonal([r[2] for r in results])
-    H = reduce(hcat, [r[3] for r in results])
-    # @show size.((x, P, H, R))
-    # @show H
-    # y, S = observe(x, P, sum(H; dims=1), R)
-    return x, P, H # , y, S
+    return x, P
 end
+
+call(c::GaussianLinear{T}, x, t) where T = transition(c, x)
+call(c::Seasonal{T}, x, t) where T = transition(c, x, t)
+call(c::Sum{T}, x, t) where T = transition(c, x, t)
+
+call(c::Seasonal{T}, x, P, t) where T = transition(c, x, P, t)
+call(c::GaussianLinear{T}, x, P, t) where T = transition(c, x, P)
+call(c::Sum{T}, x, P, t) where T = transition(c, x, P, t)
+

@@ -1,6 +1,6 @@
 abstract type Component{T <: AbstractFloat} end
 
-Base.:(+)(c1::Component{T}, c2::Component{T}) where T = Sum{T}([c1, c2])
+Base.:(+)(c1::Component{T}, c2::Component{T}) where T = Sum{T}([c1, c2], reduce(hcat, [c1.H, c2.H]))
 
 """
     simulate(model::Component, T, x, σ)
@@ -17,8 +17,8 @@ function simulate(sts::Component, steps, x, P, σ; jitter=1e-8)
     ys = Matrix{T}(undef, obs_dim, steps + 1)
     xs[:, 1] = x
     for t in 2:steps
-        x, P, H = sts(xs[:,t-1], P, t)
-        y, S = observe(x, P, H, R)
+        x, P = transition(sts, xs[:,t-1], P, t)
+        y, S = observe(sts, x, P, R)
         xs[:,t] = rand(Gaussian(x, P .+ jitter .* abs.(diagm(randn(latent_dim)))))
         ys[:,t] = rand(Gaussian(y, S))
     end

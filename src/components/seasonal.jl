@@ -36,24 +36,63 @@ Base.:(==)(c1::Seasonal, c2::Seasonal) = all([
     c1.season_length == c2.season_length
 ])
 
-function _matrices(c::Seasonal{T}, t) where T    
-    (; H, F, Q, F_noop, Q_noop, season_length) = c
+function _transition_mats(c::Seasonal{T}, t) where T
+    (; F, Q, F_noop, Q_noop, season_length) = c
     new_season = mod(t-1, season_length) == 0 && 1 < t  
     F = new_season ? F : F_noop
     Q = new_season ? Q : Q_noop
-    return H, F, Q
+    return F, Q
 end
 
-function (c::Seasonal{T})(x::Vector{T}, t::Integer) where T
-    H, F, _ = _matrices(c, t)
-    x = transition(x, F)
-    # y = observe(x, H)
-    return x, H # y
+
+@doc raw"""
+
+    function observe(c::Seasonal{T}, x::Vector{T}) where T
+
+Deterministic observation of state $x$.
+
+"""
+function observe(c::Seasonal{T}, x::Vector{T}) where T
+    (;H) = c
+    return H*x
 end
 
-function (c::Seasonal{T})(x::Vector{T}, P::Matrix{T}, t::Integer) where T
-    H, F, Q = _matrices(c, t)
-    x, P = transition(x, P, F, Q)
-    # y, S = observe(x, P, H, R)
-    return x, P, H # y, S
+@doc raw"""
+
+    function observe(c::Seasonal{T}, x::Vector{T}, P::Matrix{T}, R::Matrix{T}) where T
+
+Probabilistic observation of state with mean $x$, covariance $P$ and observation noise covariance $R$.
+
+"""
+function observe(c::Seasonal{T}, x::Vector{T}, P::Matrix{T}, R::Matrix{T}) where T
+    (;H) = c
+    y = H*x
+    S = H*P*H' + R
+    return y, S
+end
+
+@doc raw"""
+
+    function transition(c::Seasonal{T}, x::Vector{T}, t::Integer) where T
+
+Deterministic transition of state $x$ for time step $t$.
+
+"""
+function transition(c::Seasonal{T}, x::Vector{T}, t::Integer) where T
+    F, _ = _transition_mats(c, t)
+    return F*x
+end
+
+@doc raw"""
+
+    function transition(c::Seasonal{T}, x::Vector{T}, P::Matrix{T}, t::Integer) where T
+
+Probabilistic transition of state with mean $x$ and covariance $P$ for time step $t$.
+
+"""
+function transition(c::Seasonal{T}, x::Vector{T}, P::Matrix{T}, t::Integer) where T
+    F, Q = _transition_mats(c, t)
+    x = F*x
+    P = F*P*F' + Q
+    return x, P
 end
