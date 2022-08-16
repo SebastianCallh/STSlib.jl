@@ -5,6 +5,7 @@ using GaussianDistributions
 export LocalLevel, LocalLinear, Seasonal, Sum, GaussianLinear
 export latent_size
 export simulate
+export transition, observe
 
 include("components/utils.jl")
 include("components/component.jl")
