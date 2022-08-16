@@ -46,14 +46,14 @@ end
 
 function (c::Seasonal{T})(x::Vector{T}, t::Integer) where T
     H, F, _ = _matrices(c, t)
-    x = F*x
-    y = H*x
-    return x, y
+    x = transition(x, F)
+    # y = observe(x, H)
+    return x, H # y
 end
 
 function (c::Seasonal{T})(x::Vector{T}, P::Matrix{T}, t::Integer) where T
     H, F, Q = _matrices(c, t)
-    x = F*x
-    P = F*P*F' + Q
-    return x, P, H
+    x, P = transition(x, P, F, Q)
+    # y, S = observe(x, P, H, R)
+    return x, P, H # y, S
 end

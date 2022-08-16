@@ -4,7 +4,8 @@
         m = LocalLevel()
         x = [2.]
         
-        x₁, y₁ = m(x, 1)
+        x₁, H = m(x, 1)
+        y₁ = observe(x₁, H)
         @test only(y₁) == x₁[1] # observe level
         @test x₁ == [2] # constant level
     end

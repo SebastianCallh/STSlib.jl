@@ -4,7 +4,8 @@
         m = GaussianLinear([1. 0.;], diagm([1., 2.]), diagm([0.1, 0.1]))
         x = [1., 2.]
         
-        x₁, y₁ = m(x, 1)
+        x₁, H = m(x, 1)
+        y₁ = H*x₁
         @test only(y₁) == x₁[1]
         @test x₁ == [1., 4.]
     end

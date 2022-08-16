@@ -29,8 +29,8 @@ Deterministic transition of state $x$.
 function (c::GaussianLinear{T})(x::Vector{T}, args...) where T
     (;F, H) = c
     x = transition(x, F)
-    y = observe(x, H)
-    return x, y
+    #y = observe(x, H)
+    return x, H # y
 end
 
 @doc raw"""
@@ -43,7 +43,8 @@ Probabilistic transition of state with mean $x$ and covariance $P$.
 function (c::GaussianLinear{T})(x::Vector{T}, P::Matrix{T}, args...) where T
     (;H, F, Q) = c
     x, P = transition(x, P, F, Q)
-    return X, P, H
+    #y, S = observe(x, P, H, R)
+    return x, P, H # y, S
 end
 
 function observe(x, H)

@@ -4,7 +4,8 @@
         m = LocalLinear()
         x = [1., 2.]
         
-        x₁, y₁ = m(x, 1)
+        x₁, H = m(x, 1)
+        y₁ = observe(x₁, H)
         @test only(y₁) == x₁[1] # observe level
         @test x₁ == [3., 2.]
     end
