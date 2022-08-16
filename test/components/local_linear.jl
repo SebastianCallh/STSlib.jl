@@ -24,6 +24,23 @@
         @test S₁ == [3.15;;]
     end
 
+    @testset "callable with time"  begin
+        m = LocalLinear()
+        x = [1., 2.]
+        P = diagm(ones(length(x)))
+        R = [0.15;;]
+        t = 1
+
+        x₁ = transition(m, x)
+        x₂ = transition(m, x, t)
+        @test x₁ == x₂
+
+        x₁, P₁ = transition(m, x, P)
+        x₂, P₂ = transition(m, x, P, t)
+        @test x₁ == x₂
+        @test P₁ == P₂
+    end
+
     @testset "equality" begin
         m1 = LocalLinear(1, 1)
         m2 = LocalLinear(2, 1)

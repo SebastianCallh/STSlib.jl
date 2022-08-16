@@ -16,3 +16,6 @@ end
 function LocalLinear(level_scale::Integer = 1, slope_scale::Integer = 1)
     LocalLinear(Float64(level_scale), Float64(slope_scale))
 end
+
+transition(c::LocalLinear{T}, x::Vector{T}, t::Integer) where T = transition(c, x)
+transition(c::LocalLinear{T}, x::Vector{T}, P::Matrix{T}, t::Integer) where T = transition(c, x, P)
