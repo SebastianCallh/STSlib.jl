@@ -54,6 +54,7 @@ function transition(c::GaussianLinear{T}, x::Vector{T}) where T
     (;F) = c
     return F*x
 end
+transition(c::GaussianLinear{T}, x, t) where T = transition(c, x)
 
 @doc raw"""
 
@@ -68,3 +69,4 @@ function transition(c::GaussianLinear{T}, x::Vector{T}, P::Matrix{T}) where T
     P = F*P*F' + Q
     return x, P
 end
+transition(c::GaussianLinear{T}, x, P, t) where T = transition(c, x, P)

@@ -73,9 +73,10 @@ The time step parameter $t$ is forwarded to time dependant components.
 function transition(c::Sum{T}, x::Vector{T}, t::Integer) where T
     sizes = latent_size.(c.components)
     xs = _chunk(x, sizes)
-    x = reduce(vcat, call.(c.components, xs, Ref(t)))
+    x = reduce(vcat, transition.(c.components, xs, Ref(t)))
     return x
 end
+transition(c::Sum{T}, x, t) where T = transition(c, x, t)
 
 @doc raw"""
 
@@ -89,17 +90,9 @@ function transition(c::Sum{T}, x::Vector{T}, P::Matrix{T}, t::Integer) where T
     sizes = latent_size.(c.components)
     xs = _chunk(x, sizes)
     Ps = _chunk(P, sizes)
-    results = reduce(vcat, call.(c.components, xs, Ps, Ref(t)))
+    results = reduce(vcat, transition.(c.components, xs, Ps, Ref(t)))
     x = reduce(vcat, [r[1] for r in results])
     P = blockdiagonal([r[2] for r in results])
     return x, P
 end
-
-call(c::GaussianLinear{T}, x, t) where T = transition(c, x)
-call(c::Seasonal{T}, x, t) where T = transition(c, x, t)
-call(c::Sum{T}, x, t) where T = transition(c, x, t)
-
-call(c::Seasonal{T}, x, P, t) where T = transition(c, x, P, t)
-call(c::GaussianLinear{T}, x, P, t) where T = transition(c, x, P)
-call(c::Sum{T}, x, P, t) where T = transition(c, x, P, t)
-
+transition(c::Sum{T}, x, P, t) where T = transition(c, x, P, t)
