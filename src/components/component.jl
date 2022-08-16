@@ -5,16 +5,23 @@ Base.:(+)(c1::Component{T}, c2::Component{T}) where T = Sum{T}([c1, c2])
 """
     simulate(model::Component, T, x, σ)
 
-Simulates from the provided `model` for `T` time steps
-with initial state `x` and observation noise `σ`.
+Simulates from the provided `model` for `steps` time steps
+with initial state mean `x` with covariance matrix `P` and observation noise `σ`.
 """
-function simulate(sts::Component, T, x, R; jitter=1e-8)
-    res = mapreduce(hcat, 1:T) do t
-        H, F, Q = sts(t)
-        latent_dim = size(F, 1)
-        x = rand(Gaussian(F*x, Q .+ jitter .* abs.(diagm(randn(latent_dim)))))
-        y = rand(Gaussian(H*x, R))
-        (;x, y)
+function simulate(sts::Component, steps, x, P, σ; jitter=1e-8)
+    R = [σ;;]
+    T = eltype(x)
+    latent_dim = latent_size(sts)
+    obs_dim = size(R, 1)
+    xs = Matrix{T}(undef, latent_dim, steps + 1)
+    ys = Matrix{T}(undef, obs_dim, steps + 1)
+    xs[:, 1] = x
+    for t in 2:steps
+        x, P, H = sts(xs[:,t-1], P, t)
+        y, S = observe(x, P, H, R)
+        xs[:,t] = rand(Gaussian(x, P .+ jitter .* abs.(diagm(randn(latent_dim)))))
+        ys[:,t] = rand(Gaussian(y, S))
     end
-    mapreduce(r -> r.x, hcat, res), mapreduce(r -> r.y, hcat, res)
+
+    return xs[:,2:end], ys[:,2:end]
 end
