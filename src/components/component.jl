@@ -3,7 +3,7 @@ abstract type Component{T <: AbstractFloat} end
 Base.:(+)(c1::Component{T}, c2::Component{T}) where T = Sum{T}([c1, c2], reduce(hcat, [c1.H, c2.H]))
 
 """
-    simulate(model::Component, T, x, σ)
+    simulate(model::Component, T, x, P, σ)
 
 Simulates from the provided `model` for `steps` time steps
 with initial state mean `x` with covariance matrix `P` and observation noise `σ`.
