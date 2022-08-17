@@ -13,6 +13,7 @@ function Sum(components::Vector{Component{T}}) where T
     return Sum{T}(components, H)
 end
 
+observation_matrix(c::Sum) = c.H
 latent_size(m::Sum) = reduce(+, latent_size.(m.components))
 num_params(m::Sum) = reduce(+, num_params.(m.components))
 Base.length(m::Sum) = length(m.components)

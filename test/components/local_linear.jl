@@ -54,4 +54,10 @@
         m = LocalLinear(1)
         @test latent_size(m) == 2
     end
+
+    @testset "observation matrix" begin
+        m = LocalLinear(1)
+        H = observation_matrix(m)
+        @test H == [1. 0.;]
+    end
 end

@@ -58,4 +58,10 @@
         m = Seasonal(num_seasons, 2, 1)
         @test latent_size(m) == num_seasons
     end
+    
+    @testset "observation matrix" begin
+        m = Seasonal(5, 2, 1)
+        H = observation_matrix(m)
+        @test H == [1. 0. 0. 0. 0.]
+    end
 end

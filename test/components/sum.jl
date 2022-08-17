@@ -48,4 +48,10 @@
         m = LocalLinear(1, 1) + Seasonal(num_seasons, 2, 1)
         @test latent_size(m) == num_seasons + 2
     end
+        
+    @testset "observation matrix" begin
+        m = LocalLevel(1.) + Seasonal(3, 1, 1)
+        H = observation_matrix(m)
+        @test H == [1. 1. 0. 0.]
+    end
 end

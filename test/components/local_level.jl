@@ -54,4 +54,10 @@
         m = LocalLevel(1)
         @test latent_size(m) == 1
     end
+    
+    @testset "observation matrix" begin
+        m = LocalLevel(1)
+        H = observation_matrix(m)
+        @test H == [1;;]
+    end
 end

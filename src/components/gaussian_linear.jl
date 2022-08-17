@@ -9,6 +9,7 @@ transition matrix $F$ and transition covariance matrix $Q$.
 abstract type GaussianLinear{T} <: Component{T}
 end
 
+observation_matrix(c::GaussianLinear) = c.H
 latent_size(c::GaussianLinear) = size(c.H, 2)
 num_params(c::GaussianLinear) = 0
 Base.:(==)(c1::GaussianLinear, c2::GaussianLinear) = all([

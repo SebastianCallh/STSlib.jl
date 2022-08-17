@@ -25,6 +25,7 @@ function Seasonal(num_seasons::Integer, season_length::Integer, drift_scale::Int
     Seasonal(num_seasons, season_length, Float64(drift_scale))
 end
 
+observation_matrix(c::Seasonal) = c.H
 latent_size(c::Seasonal) = size(c.H, 2)
 num_params(c::Seasonal) = 0
 Base.:(==)(c1::Seasonal, c2::Seasonal) = all([
