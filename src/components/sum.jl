@@ -76,7 +76,6 @@ function transition(c::Sum{T}, x::Vector{T}, t::Integer) where T
     x = reduce(vcat, transition.(c.components, xs, Ref(t)))
     return x
 end
-transition(c::Sum{T}, x, t) where T = transition(c, x, t)
 
 @doc raw"""
 
@@ -95,4 +94,3 @@ function transition(c::Sum{T}, x::Vector{T}, P::Matrix{T}, t::Integer) where T
     P = blockdiagonal([r[2] for r in results])
     return x, P
 end
-transition(c::Sum{T}, x, P, t) where T = transition(c, x, P, t)
