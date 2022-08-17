@@ -1,5 +1,7 @@
-struct LocalLevel{T} <: Component{T}
-    model::GaussianLinear{T}
+struct LocalLevel{T} <: GaussianLinear{T}
+    H::Matrix{T}
+    F::Matrix{T}
+    Q::Matrix{T}
 end
 
 """
@@ -8,17 +10,12 @@ end
 
 """
 function LocalLevel(level_scale::T = 1.) where T <: AbstractFloat
-    LocalLevel(GaussianLinear(T[1;;], T[1;;], diagm([level_scale^2])))
+    LocalLevel(T[1;;], T[1;;], diagm([level_scale^2]))
 end
 
 function LocalLevel(level_scale::Integer)
     LocalLevel(Float64(level_scale))
 end
 
-latent_size(c::LocalLevel) = latent_size(c.model)
-num_params(c::LocalLevel) = 0
-Base.:(==)(c1::LocalLevel, c2::LocalLevel) = c1.model == c2.model
-
-function (c::LocalLevel{T})(x::Vector{T}, t::Integer) where T
-    return c.model(x, t)
-end
+transition(c::LocalLevel{T}, x::Vector{T}, t::Integer) where T = transition(c, x)
+transition(c::LocalLevel{T}, x::Vector{T}, P::Matrix{T}, t::Integer) where T = transition(c, x, P)

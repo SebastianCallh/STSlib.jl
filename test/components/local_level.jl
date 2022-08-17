@@ -1,14 +1,44 @@
 @testset "local_level" begin
 
-    @testset "transition" begin
+    @testset "transition deterministic" begin
         m = LocalLevel()
         x = [2.]
         
-        H, F, Q = m(x, 1)
-        x₁ = F*x
-        y₁ = H*x₁
+        x₁ = transition(m, x)
+        y₁ = observe(m, x₁)
         @test only(y₁) == x₁[1] # observe level
         @test x₁ == [2] # constant level
+    end
+
+    @testset "transition probabilistic" begin
+        m = LocalLevel()
+        x = [2.]
+        P = diagm(ones(length(x)))
+        R = [0.15;;]
+
+        x₁, P₁ = transition(m, x, P)
+        y₁, S₁ = observe(m, x₁, P₁, R)
+        @test only(y₁) == x₁[1] # observe level
+        @test x₁ == [2.]
+        @test P₁ == [2.0;;]
+        @test S₁ == [2.15;;]
+    end
+        
+    @testset "callable with time"  begin
+        m = LocalLevel()
+        x = [1.]
+        P = diagm(ones(length(x)))
+        R = [0.15;;]
+        t = 1
+
+        x₁ = transition(m, x)
+        x₂ = transition(m, x, t)
+        @test x₁ == x₂
+
+        x₁, P₁ = transition(m, x, P)
+        x₂, P₂ = transition(m, x, P, t)
+        @test x₁ == x₂
+        @test P₁ == P₂
     end
 
     @testset "equality" begin
@@ -23,5 +53,11 @@
     @testset "size" begin
         m = LocalLevel(1)
         @test latent_size(m) == 1
+    end
+    
+    @testset "observation matrix" begin
+        m = LocalLevel(1)
+        H = observation_matrix(m)
+        @test H == [1;;]
     end
 end
