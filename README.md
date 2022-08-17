@@ -44,14 +44,18 @@ slope_drift_scale = 0.5
 sts = LocalLinear(level_drift_scale, slope_drift_scale)
 x₀ = [1., 1.]
 x₁ = transition(sts, x₀)
+y₁ = observe(sts, x₁)
 ```
 
-For probabilistic transitions simply pass the covariance matric $P$ as an additional argument.
+For probabilistic transitions additionally pass the state covariance matrix $P$ to `transition`,
+and $P$ and observation noise covariance $R$ to `observe`.
 
 ```julia
 x₀ = [1., 1.]
 P₀ = diagm(ones(length(x₀)))
+R = [0.1;;]
 x₁, P₁ = transition(sts, x₀, P₀)
+y₁, S₁ = observe(sts, x₁, P₁, R)
 ```
 
 Some components depend on the current time step $t$, like the `Seasonal` one.
@@ -64,6 +68,7 @@ sts = Seasonal(num_seasons, season_length, drift_scale)
 x₀ = ones(num_seasons)
 t = 1
 x₁ = transition(sts, x₀, t)
+y₁ = observe(sts, x₁)
 ```
 
 Prhaps you want to compute many future states all at once. 
