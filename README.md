@@ -82,7 +82,7 @@ steps = 50          # number of steps to simulate
 xs, ys = simulate(sts, steps, x₀, P₀, σ)
 
 labels = reshape(["x$i" for i in 1:size(xs, 1)], 1, :)
-x_plt = scatter(xs', label=labels, title="State", legend=:topleft)
+x_plt = scatter(xs', label=labels, title="States", legend=:topleft)
 y_plt = scatter(ys', label=nothing, title="Observations")
 plot(x_plt, y_plt, layout=(2, 1))
 ```
@@ -113,7 +113,7 @@ steps = length(seasons)
 xs, ys = simulate(sts, steps, x₀, P₀, σ)
 
 labels = reshape(["x$i" for i in 1:size(xs, 1)], 1, :)
-x_plt = scatter(xs', label=labels, title="State", legend=:bottomleft)
+x_plt = scatter(xs', label=labels, title="States", legend=:topleft)
 y_plt = scatter(ys', color=seasons, label=nothing, title="Observations")
 plot(x_plt, y_plt, layout=(2, 1), size=(600, 600))
 ```
