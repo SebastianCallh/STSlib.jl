@@ -56,7 +56,7 @@ end
 Probabilistic observation of state with mean $x$, covariance $P$ and observation noise covariance $R$.
 
 """
-function observe(c::Sum{T}, x::Vector{T}, P::Matrix{T}, R::Matrix{T}) where T
+function observe(c::Sum{T}, x, P, R) where T
     (;H) = c
     y = H*x
     S = H*P*H' + R
@@ -71,7 +71,7 @@ Deterministic transition of state $x$ for time step $t$.
 The time step parameter $t$ is forwarded to time dependant components.
 
 """
-function transition(c::Sum{T}, x::Vector{T}, t::Integer) where T
+function transition(c::Sum{T}, x, t) where T
     sizes = latent_size.(c.components)
     xs = _chunk(x, sizes)
     x = reduce(vcat, transition.(c.components, xs, Ref(t)))
@@ -86,7 +86,7 @@ Probabilistic transition of state with mean $x$ and covariance $P$ for time step
 The time step parameter $t$ is forwarded to time dependant components.
 
 """
-function transition(c::Sum{T}, x::Vector{T}, P::Matrix{T}, t::Integer) where T
+function transition(c::Sum{T}, x, P, t) where T
     sizes = latent_size.(c.components)
     xs = _chunk(x, sizes)
     Ps = _chunk(P, sizes)

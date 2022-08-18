@@ -31,12 +31,16 @@
         @test x₁ == x[[2, 3, 4, 1]] # cycle seasons
         @test P₁ == [1.01 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1]
         @test S₁ == [2.01;;]
+        @test eltype(x₁) == eltype(x)
+        @test eltype(y₁) == eltype(x)
 
         x₂, P₂ = transition(m, x, P, season_length)
         y₂, S₂ = observe(m, x₂, P, R)
         @test x₂ == x # do not cycle seasons
         @test P₂ == [1.0 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1]
         @test S₂ == [2.0;;]
+        @test eltype(x₂) == eltype(x)
+        @test eltype(y₂) == eltype(x)
     end
     
 
@@ -58,7 +62,7 @@
         m = Seasonal(num_seasons, 2, 1)
         @test latent_size(m) == num_seasons
     end
-    
+
     @testset "observation matrix" begin
         m = Seasonal(5, 2, 1)
         H = observation_matrix(m)

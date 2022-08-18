@@ -53,7 +53,7 @@ end
 Deterministic observation of state $x$.
 
 """
-function observe(c::Seasonal{T}, x::Vector{T}) where T
+function observe(c::Seasonal{T}, x) where T
     (;H) = c
     return H*x
 end
@@ -65,7 +65,7 @@ end
 Probabilistic observation of state with mean $x$, covariance $P$ and observation noise covariance $R$.
 
 """
-function observe(c::Seasonal{T}, x::Vector{T}, P::Matrix{T}, R::Matrix{T}) where T
+function observe(c::Seasonal{T}, x, P, R) where T
     (;H) = c
     y = H*x
     S = H*P*H' + R
@@ -79,7 +79,7 @@ end
 Deterministic transition of state $x$ for time step $t$.
 
 """
-function transition(c::Seasonal{T}, x::Vector{T}, t::Integer) where T
+function transition(c::Seasonal{T}, x, t) where T
     F, _ = _transition_mats(c, t)
     return F*x
 end
@@ -91,7 +91,7 @@ end
 Probabilistic transition of state with mean $x$ and covariance $P$ for time step $t$.
 
 """
-function transition(c::Seasonal{T}, x::Vector{T}, P::Matrix{T}, t::Integer) where T
+function transition(c::Seasonal{T}, x, P, t) where T
     F, Q = _transition_mats(c, t)
     x = F*x
     P = F*P*F' + Q

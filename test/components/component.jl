@@ -9,5 +9,7 @@
         xs, ys = simulate(sts, steps, x₀, P, σ)
         @test size(xs) == (5, steps)
         @test size(ys) == (1, steps)
+        @test eltype(xs) == eltype(x₀)
+        @test eltype(ys) == eltype(x₀)
     end
 end
