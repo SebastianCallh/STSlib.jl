@@ -1,7 +1,7 @@
 @testset "local_linear" begin
 
     @testset "transition deterministic" begin
-        m = LocalLinear()
+        m = LocalLinear(1, 1)
         x = [1., 2.]
         
         x₁ = transition(m, x)
@@ -11,7 +11,7 @@
     end
 
     @testset "transition probabilistic" begin
-        m = LocalLinear()
+        m = LocalLinear(1, 1)
         x = [1., 2.]
         P = diagm(ones(length(x)))
         R = [0.15;;]
@@ -25,7 +25,7 @@
     end
 
     @testset "callable with time"  begin
-        m = LocalLinear()
+        m = LocalLinear(1, 1)
         x = [1., 2.]
         P = diagm(ones(length(x)))
         R = [0.15;;]
@@ -42,21 +42,21 @@
     end
 
     @testset "equality" begin
-        m1 = LocalLinear(1, 1)
-        m2 = LocalLinear(2, 1)
-        m3 = LocalLinear(1)
+        m1 = LocalLinear(1., 1.)
+        m2 = LocalLinear(2., 1.)
+        m3 = LocalLinear(1, 1)
         @test m1 == m1
         @test m1 != m2
         @test m1 == m3
     end
 
     @testset "size" begin
-        m = LocalLinear(1)
+        m = LocalLinear(1, 2)
         @test latent_size(m) == 2
     end
 
     @testset "observation matrix" begin
-        m = LocalLinear(1)
+        m = LocalLinear(1, 2)
         H = observation_matrix(m)
         @test H == [1. 0.;]
     end

@@ -6,15 +6,11 @@ end
 
 """
 
-    LocalLevel(level_scale::Real)
+    LocalLevel(level_scale::T) <: AbstractFloat
 
 """
-function LocalLevel(level_scale::T = 1.) where T <: AbstractFloat
-    LocalLevel(T[1;;], T[1;;], diagm([level_scale^2]))
-end
-
-function LocalLevel(level_scale::Integer)
-    LocalLevel(Float64(level_scale))
+function LocalLevel(level_scale::T) where T
+    LocalLevel([1.;;], [1.;;], diagm([convert(float(T), level_scale)^2]))
 end
 
 transition(c::LocalLevel{T}, x::Vector{T}, t::Integer) where T = transition(c, x)
