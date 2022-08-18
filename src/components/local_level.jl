@@ -13,5 +13,5 @@ function LocalLevel(level_scale::T) where T
     LocalLevel([1.;;], [1.;;], diagm([convert(float(T), level_scale)^2]))
 end
 
-transition(c::LocalLevel{T}, x::Vector{T}, t::Integer) where T = transition(c, x)
-transition(c::LocalLevel{T}, x::Vector{T}, P::Matrix{T}, t::Integer) where T = transition(c, x, P)
+transition(c::LocalLevel{T}, x, t::Integer) where T = transition(c, x)
+transition(c::LocalLevel{T}, x, P, t::Integer) where T = transition(c, x, P)

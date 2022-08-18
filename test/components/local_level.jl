@@ -8,6 +8,8 @@
         y₁ = observe(m, x₁)
         @test only(y₁) == x₁[1] # observe level
         @test x₁ == [2] # constant level
+        @test eltype(x₁) == eltype(x)
+        @test eltype(y₁) == eltype(x)
     end
 
     @testset "transition probabilistic" begin
@@ -22,6 +24,8 @@
         @test x₁ == [2.]
         @test P₁ == [2.0;;]
         @test S₁ == [2.15;;]
+        @test eltype(x₁) == eltype(x)
+        @test eltype(y₁) == eltype(x)
     end
         
     @testset "callable with time"  begin
@@ -34,11 +38,15 @@
         x₁ = transition(m, x)
         x₂ = transition(m, x, t)
         @test x₁ == x₂
+        @test eltype(x₁) == eltype(x)
+        @test eltype(x₂) == eltype(x)
 
         x₁, P₁ = transition(m, x, P)
         x₂, P₂ = transition(m, x, P, t)
         @test x₁ == x₂
         @test P₁ == P₂
+        @test eltype(x₁) == eltype(x)
+        @test eltype(x₂) == eltype(x)
     end
 
     @testset "equality" begin

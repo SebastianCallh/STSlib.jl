@@ -12,5 +12,4 @@
         @test eltype(xs) == eltype(x₀)
         @test eltype(ys) == eltype(x₀)
     end
-
 end
