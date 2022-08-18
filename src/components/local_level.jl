@@ -17,5 +17,5 @@ function LocalLevel(level_scale::Integer)
     LocalLevel(Float64(level_scale))
 end
 
-transition(c::LocalLevel{T}, x::Vector{T}, t::Integer) where T = transition(c, x)
-transition(c::LocalLevel{T}, x::Vector{T}, P::Matrix{T}, t::Integer) where T = transition(c, x, P)
+transition(c::LocalLevel{T}, x, t::Integer) where T = transition(c, x)
+transition(c::LocalLevel{T}, x, P, t::Integer) where T = transition(c, x, P)
