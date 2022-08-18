@@ -12,17 +12,15 @@ struct Seasonal{T} <: Component{T}
     season_length::Int64
 end
 
-function Seasonal(num_seasons::Integer, season_length::Integer, drift_scale::T) where T <: AbstractFloat
+function Seasonal(num_seasons::T, season_length::U, drift_scale::V) where {T, U, V}
     H = Matrix(hcat(1, zeros(T, num_seasons-1)'))
     F = diagm(ones(T, num_seasons))[:,vcat(num_seasons, 1:num_seasons-1)]
-    Q = diagm(vcat(drift_scale^2, zeros(T, num_seasons-1)))
+    Q = diagm(vcat(convert(float(V), drift_scale)^2, zeros(T, num_seasons-1)))
     F_noop = diagm(ones(T, num_seasons))
     Q_noop = diagm(zeros(T, num_seasons))
-    Seasonal(T.(H), T.(F), T.(Q), F_noop, Q_noop, season_length)
-end
 
-function Seasonal(num_seasons::Integer, season_length::Integer, drift_scale::Integer)
-    Seasonal(num_seasons, season_length, Float64(drift_scale))
+    to_float(type, x) = convert.(float(type), x)
+    Seasonal(to_float(T, H), to_float(T, F), to_float(T, Q), to_float(T, F_noop), to_float(T, Q_noop), season_length)
 end
 
 observation_matrix(c::Seasonal) = c.H

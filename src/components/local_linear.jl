@@ -6,15 +6,11 @@ end
 
 """
 
-    LocalLinear(level_scale::Real, slope_scale::Real)
+    LocalLinear(level_scale::T, slope_scale::T) where T <: AbstractFloat
 
 """
-function LocalLinear(level_scale::T = 1., slope_scale::T = 1.) where T <: AbstractFloat
-    LocalLinear(T[1 0], T[1 1; 0 1], diagm([level_scale^2, slope_scale^2]))
-end
-
-function LocalLinear(level_scale::Integer = 1, slope_scale::Integer = 1)
-    LocalLinear(Float64(level_scale), Float64(slope_scale))
+function LocalLinear(level_scale::T, slope_scale::U) where {T, U}
+    LocalLinear([1. 0.], [1. 1.; 0. 1.], diagm([convert(float(T), level_scale)^2, convert(float(U), slope_scale)^2]))
 end
 
 transition(c::LocalLinear{T}, x, t::Integer) where T = transition(c, x)
