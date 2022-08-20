@@ -11,24 +11,26 @@ If `compound_uncertainty` is `true` the result will be a randomly sampled trajec
 If `compound_uncertainty` is `false`, covariance `P` will not accumulate.
 """
 function simulate(sts, steps, x₀, P₀, σ; compound_uncertainty = true)
-    R = [σ;;]
+    R = @SMatrix [σ;;]
     T = eltype(x₀)
-    latent_dim = latent_size(sts)
-    obs_dim = size(R, 1)
-    xs = Matrix{T}(undef, latent_dim, steps)
-    ys = Matrix{T}(undef, obs_dim, steps)
-    xs[:, 1] = x₀
-    x, P = copy(x₀), copy(P₀)
-    for t in 1:size(xs, 2)
-        x, Pₜ = transition(sts, xs[:,max(t-1, 1)], P, t)
+    N = latent_size(sts)
+    M = size(R, 1)
+    xs = [SVector{N, T}(zeros(N)) for _ in 1:steps]
+    ys = [SVector{M, T}(zeros(M)) for _ in 1:steps]
+    xs[1] = x₀
+
+    x = SVector{length(x₀)}(x₀)
+    P = MMatrix{N, N}(P₀)
+    for t in 1:steps
+        x, Pₜ = transition(sts, xs[max(t-1, 1)], P, t)
         y, S = observe(sts, x, P, R)
-        xs[:,t] = rand(Gaussian(x, P))
-        ys[:,t] = rand(Gaussian(y, S))
+        xs[t] = rand(Gaussian(x, P))
+        ys[t] = rand(Gaussian(y, S))
 
         if compound_uncertainty 
-            P .= Pₜ
+            P .= MMatrix{N, N}(Pₜ)
         end
     end
 
-    return xs, ys
+    return reduce(hcat, xs), reduce(hcat, ys)
 end

@@ -26,14 +26,14 @@ end
 """Chunks a vector into components which sizes are determined by `sizes`."""
 function _chunk(x::T, sizes) where T <: AbstractVector
     indices = _make_indices(sizes)
-    chunks = [x[i:j] for (i, j) in indices]
+    chunks = [SVector{j-i+1}(x[i:j]) for (i, j) in indices]
     return chunks
 end
 
 """Chunks a matrix into block matrix components"""
 function _chunk(x::T, sizes) where T <: AbstractMatrix
     indices = _make_indices(sizes)
-    chunks = [x[i:j, i:j] for (i, j) in indices]
+    chunks = [SMatrix{j-i+1, j-i+1}(x[i:j, i:j]) for (i, j) in indices]
     return chunks
 end
 

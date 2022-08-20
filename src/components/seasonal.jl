@@ -3,12 +3,12 @@
 Seasonal(num_seasons::Integer, season_length::Integer, drift_scale::Real)
 
 """
-struct Seasonal{T} <: Component{T}
-    H::Matrix{T}
-    F::Matrix{T}
-    Q::Matrix{T}
-    F_noop::Matrix{T}
-    Q_noop::Matrix{T}
+struct Seasonal{T, M, N} <: Component{T}
+    H::SMatrix{M, N, T}
+    F::SMatrix{N, N, T}
+    Q::SMatrix{N, N, T}
+    F_noop::SMatrix{N, N, T}
+    Q_noop::SMatrix{N, N, T}
     season_length::Int64
 end
 
@@ -19,8 +19,11 @@ function Seasonal(num_seasons::T, season_length::U, drift_scale::V) where {T, U,
     F_noop = diagm(ones(T, num_seasons))
     Q_noop = diagm(zeros(T, num_seasons))
 
-    to_float(type, x) = convert.(float(type), x)
-    Seasonal(to_float(T, H), to_float(T, F), to_float(T, Q), to_float(T, F_noop), to_float(T, Q_noop), season_length)
+    fix(type, x) = begin
+        m, n = size(x)
+        SMatrix{m, n, float(type)}(x)
+    end
+    Seasonal{float(T), 1, num_seasons}(fix(T, H), fix(T, F), fix(T, Q), fix(T, F_noop), fix(T, Q_noop), season_length)
 end
 
 observation_matrix(c::Seasonal) = c.H
