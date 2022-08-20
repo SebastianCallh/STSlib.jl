@@ -1,6 +1,6 @@
 """
 
-Sum{T(components::Vector{Component{T}}) where T <: AbstractFloat
+Sum{T(components::Vector{Component{T}})
 
 """
 struct Sum{T} <: Component{T}
@@ -39,7 +39,7 @@ end
 
 @doc raw"""
 
-    function observe(c::Sum{T}, x::Vector{T}) where T
+    function observe(c::Sum{T}, x::Vector) where T
 
 Deterministic observation of state $x$.
 
@@ -51,7 +51,7 @@ end
 
 @doc raw"""
 
-    function observe(c::Sum{T}, x::Vector{T}, P::Matrix{T}, R::Matrix{T}) where T
+    function observe(c::Sum{T}, x::Vector, P::Matrix, R::Matrix) where T
 
 Probabilistic observation of state with mean $x$, covariance $P$ and observation noise covariance $R$.
 
@@ -65,10 +65,10 @@ end
 
 @doc raw"""
 
-    function transition(c::Sum{T}, x::Vector{T}, t::Integer) where T
+    function transition(c::Sum{T}, x::Vector, t::Integer) where T
 
 Deterministic transition of state $x$ for time step $t$.
-The time step parameter $t$ is forwarded to time dependant components.
+The time step parameter $t$ is forwarded to time dependent components.
 
 """
 function transition(c::Sum{T}, x, t) where T
@@ -80,10 +80,10 @@ end
 
 @doc raw"""
 
-    function transition(c::Sum{T}, x::Vector{T}, P::Matrix{T}) where T
+    function transition(c::Sum{T}, x::Vector, P::Matrix) where T
 
 Probabilistic transition of state with mean $x$ and covariance $P$ for time step $t$.
-The time step parameter $t$ is forwarded to time dependant components.
+The time step parameter $t$ is forwarded to time dependent components.
 
 """
 function transition(c::Sum{T}, x, P, t) where T
