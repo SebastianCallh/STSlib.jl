@@ -1,6 +1,7 @@
 module STSlib
 using LinearAlgebra
 using GaussianDistributions
+using StaticArrays
 
 export LocalLevel, LocalLinear, Seasonal, Sum, GaussianLinear
 export latent_size, observation_matrix
