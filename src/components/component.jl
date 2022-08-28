@@ -1,6 +1,4 @@
-abstract type Component{T <: AbstractFloat} end
-
-Base.:(+)(c1::Component{T}, c2::Component{T}) where T = Sum{T}([c1, c2], reduce(hcat, [c1.H, c2.H]))
+abstract type AbstractComponent{T <: AbstractFloat} end
 
 """
     simulate(sts::Component, steps, x₀, P₀, σ; compound_uncertainty = true)

@@ -6,14 +6,14 @@ Gausssian linear state space model with observation matrix $H$,
 transition matrix $F$ and transition covariance matrix $Q$.
 
 """
-struct GaussianLinear{T, M, N} <: Component{T}
-    H::SMatrix{M, N, T}
-    F::SMatrix{N, N, T}
-    Q::SMatrix{N, N, T}
+struct GaussianLinear{T, U <: AbstractMatrix{T}, V <: AbstractMatrix{T}} <: AbstractComponent{T}
+    H::U
+    F::V
+    Q::V
 end
 
 observation_matrix(c::GaussianLinear) = c.H
-latent_size(c::GaussianLinear{T, M, N}) where  {T, M, N} = N
+latent_size(c::GaussianLinear) = size(c.H, 2)
 num_params(c::GaussianLinear) = 0
 Base.:(==)(c1::GaussianLinear, c2::GaussianLinear) = all([
     c1.H == c2.H,
@@ -28,7 +28,7 @@ Base.:(==)(c1::GaussianLinear, c2::GaussianLinear) = all([
 Deterministic observation of state $x$.
 
 """
-function observe(c::GaussianLinear, x)
+function observe(c::GaussianLinear{T}, x) where {T}
     (;H) = c
     return H*x
 end
@@ -40,7 +40,7 @@ end
 Probabilistic observation of state with mean $x$, covariance $P$ and observation noise covariance $R$.
 
 """
-function observe(c::GaussianLinear, x, P, R)
+function observe(c::GaussianLinear{T}, x, P, R) where {T}
     (;H) = c
     y = H*x
     S = H*P*H' + R
@@ -54,11 +54,11 @@ end
 Deterministic transition of state $x$.
 
 """
-function transition(c::GaussianLinear, x)
+function transition(c::GaussianLinear{T}, x) where {T}
     (;F) = c
     return F*x
 end
-transition(c::GaussianLinear, x, t::Integer) = transition(c, x)
+transition(c::GaussianLinear{T}, x, t::V) where {T, V <: Integer} = transition(c, x)
 
 @doc raw"""
 
@@ -67,10 +67,10 @@ transition(c::GaussianLinear, x, t::Integer) = transition(c, x)
 Probabilistic transition of state with mean $x$ and covariance $P$.
 
 """
-function transition(c::GaussianLinear, x, P)
+function transition(c::GaussianLinear{T}, x, P) where {T}
     (;F, Q) = c
     x = F*x
     P = F*P*F' + Q
     return x, P
 end
-transition(c::GaussianLinear, x, P, t::Integer) = transition(c, x, P)
+transition(c::GaussianLinear{T}, x, P, t::V) where {T, V <: Integer} = transition(c, x, P)
