@@ -3,27 +3,25 @@
 Seasonal(num_seasons::Integer, season_length::Integer, drift_scale::Real)
 
 """
-struct Seasonal{T, M, N} <: Component{T}
-    H::SMatrix{M, N, T}
-    F::SMatrix{N, N, T}
-    Q::SMatrix{N, N, T}
-    F_noop::SMatrix{N, N, T}
-    Q_noop::SMatrix{N, N, T}
+struct Seasonal{T, U <: AbstractMatrix{T}, V <: AbstractMatrix{T}} <: AbstractComponent{T}
+    H::U
+    F::V
+    Q::V
+    F_noop::V
+    Q_noop::V
     season_length::Int64
 end
 
 function Seasonal(num_seasons::T, season_length::U, drift_scale::V) where {T, U, V}
-    H = Matrix(hcat(1, zeros(T, num_seasons-1)'))
+    H = SMatrix{1, num_seasons, V}(vcat(1, zeros(num_seasons-1)))
     F = diagm(ones(T, num_seasons))[:,vcat(num_seasons, 1:num_seasons-1)]
-    Q = diagm(vcat(convert(float(V), drift_scale)^2, zeros(T, num_seasons-1)))
-    F_noop = diagm(ones(T, num_seasons))
-    Q_noop = diagm(zeros(T, num_seasons))
+    F = SMatrix{size(F)..., eltype(F)}(F)
+    Q =  diagm(vcat(convert(float(V), drift_scale)^2, @SVector zeros(T, num_seasons-1)))
+    F_noop = diagm(@SVector ones(T, num_seasons))
+    Q_noop = diagm(@SVector zeros(T, num_seasons))
 
-    fix(type, x) = begin
-        m, n = size(x)
-        SMatrix{m, n, float(type)}(x)
-    end
-    Seasonal{float(T), 1, num_seasons}(fix(T, H), fix(T, F), fix(T, Q), fix(T, F_noop), fix(T, Q_noop), season_length)
+    to_float(x) = convert.(float(V), x)
+    Seasonal(to_float(H), to_float(F), to_float(Q), to_float(F_noop), to_float(Q_noop), season_length)
 end
 
 observation_matrix(c::Seasonal) = c.H
