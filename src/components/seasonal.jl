@@ -24,8 +24,6 @@ function Seasonal(num_seasons::T, season_length::U, drift_scale::V) where {T, U,
     Seasonal(to_float(H), to_float(F), to_float(Q), to_float(F_noop), to_float(Q_noop), season_length)
 end
 
-observation_matrix(c::Seasonal) = c.H
-latent_size(c::Seasonal) = size(c.H, 2)
 num_params(c::Seasonal) = 0
 Base.:(==)(c1::Seasonal, c2::Seasonal) = all([
     c1.H == c2.H,
@@ -47,41 +45,16 @@ end
 
 @doc raw"""
 
-    function observe(c::Seasonal{T}, x::Vector{T}) where T
-
-Deterministic observation of state $x$.
-
-"""
-function observe(c::Seasonal{T}, x) where T
-    (;H) = c
-    return H*x
-end
-
-@doc raw"""
-
-    function observe(c::Seasonal{T}, x::Vector{T}, P::Matrix{T}, R::Matrix{T}) where T
-
-Probabilistic observation of state with mean $x$, covariance $P$ and observation noise covariance $R$.
-
-"""
-function observe(c::Seasonal{T}, x, P, R) where T
-    (;H) = c
-    y = H*x
-    S = H*P*H' + R
-    return y, S
-end
-
-@doc raw"""
-
     function transition(c::Seasonal{T}, x::Vector{T}, t::Integer) where T
 
 Deterministic transition of state $x$ for time step $t$.
 
 """
-function transition(c::Seasonal{T}, x, t) where T
+function transition(c::Seasonal{T}, x, t::U) where {T, U <: Integer}
     F, _ = _transition_mats(c, t)
     return F*x
 end
+transition(c::Seasonal{T}, x, t::U, params) where {T, U <: Integer} = transition(c, x, t)
 
 @doc raw"""
 
@@ -96,3 +69,4 @@ function transition(c::Seasonal{T}, x, P, t) where T
     P = F*P*F' + Q
     return x, P
 end
+transition(c::Seasonal{T}, x, P, t::U, params) where {T, U <: Integer} = transition(c, x, P, t)
