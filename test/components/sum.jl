@@ -56,7 +56,14 @@
         H = observation_matrix(m)
         @test H == [1. 1. 0. 0.]
     end
-    
+        
+    @testset "params" begin
+        c1 = LocalLevel(1.) 
+        c2 = LocalLinear(3, 1)
+        m = c1 + c2
+        @test num_params(m) == num_params(c1) + num_params(c2)
+    end
+
     @testset "nested sums" begin
         m1 = LocalLevel(1.) + Seasonal(3, 1, 1)
         m2 = LocalLinear(1., 2.)

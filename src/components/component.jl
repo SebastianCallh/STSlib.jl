@@ -1,5 +1,35 @@
 abstract type AbstractComponent{T <: AbstractFloat} end
 
+observation_matrix(c::U) where {T, U <: AbstractComponent{T}} = c.H
+latent_size(c::U) where {T, U <: AbstractComponent{T}} = size(c.H, 2)
+
+
+@doc raw"""
+
+    observe(c::U, x) where {T, U <: AbstractComponent{T}}
+
+Deterministic observation of state $x$.
+
+"""
+function observe(c::U, x) where {T, U <: AbstractComponent{T}}
+    (;H) = c
+    return H*x
+end
+
+@doc raw"""
+
+    observe(c::U, x, P, R) where {T, U <: AbstractComponent{T}}
+
+Probabilistic observation of state with mean $x$, covariance $P$ and observation noise covariance $R$.
+
+"""
+function observe(c::U, x, P, R) where {T, U <: AbstractComponent{T}}
+    (;H) = c
+    y = H*x
+    S = H*P*H' + R
+    return y, S
+end
+
 """
     simulate(sts::Component, steps, x₀, P₀, σ; compound_uncertainty = true)
 
@@ -8,7 +38,7 @@ with initial state mean `x` with covariance matrix `P` and observation noise `σ
 If `compound_uncertainty` is `true` the result will be a randomly sampled trajectory.
 If `compound_uncertainty` is `false`, covariance `P` will not accumulate.
 """
-function simulate(sts, steps, x₀, P₀, σ; compound_uncertainty = true)
+function simulate(sts, steps, x₀, P₀, σ, params=SA{Float64}[]; compound_uncertainty = true)
     R = @SMatrix [σ;;]
     T = eltype(x₀)
     N = latent_size(sts)
@@ -20,7 +50,7 @@ function simulate(sts, steps, x₀, P₀, σ; compound_uncertainty = true)
     x = SVector{length(x₀)}(x₀)
     P = MMatrix{N, N}(P₀)
     for t in 1:steps
-        x, Pₜ = transition(sts, xs[max(t-1, 1)], P, t)
+        x, Pₜ = transition(sts, xs[max(t-1, 1)], P, t, params)
         y, S = observe(sts, x, P, R)
         xs[t] = rand(Gaussian(x, P))
         ys[t] = rand(Gaussian(y, S))
