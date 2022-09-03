@@ -2,22 +2,22 @@
 
 GaussianLinear(H::Matrix{T}, F::Matrix{T}, Q::Matrix{T}) where T <: AbstractFloat
 
-Gausssian linear state space model with observation matrix $H$,
+Gausssian linear state space model encoding 
+
+$$$x_{t+1} = Fx_t + \epsilon, \epsilon \sim \mathcal{N}(b, Q)$$$
+
+with observation matrix $H$,
 transition matrix $F$ and transition covariance matrix $Q$.
 
 """
-struct GaussianLinear{T, U <: AbstractMatrix{T}, V <: AbstractMatrix{T}} <: AbstractComponent{T}
+struct GaussianLinear{T, U <: AbstractMatrix{T}, V <: AbstractVector{T}, X <: AbstractMatrix{T}} <: AbstractComponent{T}
     H::U
-    F::V
-    Q::V
+    b::V
+    F::X
+    Q::X
 end
 
 num_params(c::GaussianLinear) = 0
-Base.:(==)(c1::GaussianLinear, c2::GaussianLinear) = all([
-    c1.H == c2.H,
-    c1.F == c2.F,
-    c1.Q == c2.Q,
-])
 
 @doc raw"""
 
@@ -27,8 +27,8 @@ Deterministic transition of state $x$.
 
 """
 function transition(c::GaussianLinear{T}, x) where {T}
-    (;F) = c
-    return F*x
+    (;F, b) = c
+    return F*x + b
 end
 transition(c::GaussianLinear{T}, x, t::V) where {T, V <: Integer} = transition(c, x)
 transition(c::GaussianLinear{T}, x, t::V, params) where {T, V <: Integer} = transition(c, x)
@@ -41,8 +41,8 @@ Probabilistic transition of state with mean $x$ and covariance $P$.
 
 """
 function transition(c::GaussianLinear{T}, x, P) where {T}
-    (;F, Q) = c
-    x = F*x
+    (;F, b, Q) = c
+    x = F*x + b
     P = F*P*F' + Q
     return x, P
 end
