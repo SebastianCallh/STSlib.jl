@@ -25,14 +25,6 @@ function Seasonal(num_seasons::T, season_length::U, drift_scale::V) where {T, U,
 end
 
 num_params(c::Seasonal) = 0
-Base.:(==)(c1::Seasonal, c2::Seasonal) = all([
-    c1.H == c2.H,
-    c1.F == c2.F,
-    c1.Q == c2.Q,
-    c2.F_noop == c2.F_noop,
-    c1.Q_noop == c2.Q_noop,
-    c1.season_length == c2.season_length
-])
 
 function _transition_mats(c::Seasonal{T}, t) where T
     (; F, Q, F_noop, Q_noop, season_length) = c

@@ -4,7 +4,7 @@ using GaussianDistributions
 using StaticArrays
 
 export LocalLevel, LocalLinear, SemiLocalLinear, Seasonal, Sum, GaussianLinear
-export latent_size, observation_matrix
+export latent_size, num_params, observation_matrix
 export simulate
 export transition, observe
 
