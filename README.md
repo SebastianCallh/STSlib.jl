@@ -33,27 +33,14 @@ This section showcases package functionality with some code snippets.
 ## Basics
 
 When using this package you most likely want to start with creating an STS model. You can then use the functions `transition` to map state $x_t$ to $x_{t+1}$ and `observe` to map $x_t$ to $y_t$.
-Both of these functions are available both as deterministic or probabilistic (assuming Gaussian variables) versions.
 Below, we create a `LocalLinear` model and compute future states and observations.
 
 ```julia
 using STSlib, Random, LinearAlgebra, Plots
 
-level_drift_scale = 1.
-slope_drift_scale = 0.5
-sts = LocalLinear(level_drift_scale, slope_drift_scale)
-x₀ = [1., 1.]
-x₁ = transition(sts, x₀)
-y₁ = observe(sts, x₁)
-```
-
-For probabilistic transitions additionally pass the state covariance matrix $P$ to `transition`,
-and $P$ and observation noise covariance $R$ to `observe`.
-
-```julia
-x₀ = [1., 1.]
-P₀ = diagm(ones(length(x₀)))
-R = [0.1;;]
+x₀ = [1., 1.]                # state mean
+P₀ = diagm(ones(length(x₀))) # state covariance
+R = [0.1;;]                  # observation covariance
 x₁, P₁ = transition(sts, x₀, P₀)
 y₁, S₁ = observe(sts, x₁, P₁, R)
 ```
