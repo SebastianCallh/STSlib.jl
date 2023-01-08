@@ -3,19 +3,6 @@ abstract type AbstractComponent{T <: AbstractFloat} end
 observation_matrix(c::U) where {T, U <: AbstractComponent{T}} = c.H
 latent_size(c::U) where {T, U <: AbstractComponent{T}} = size(c.H, 2)
 
-
-@doc raw"""
-
-    observe(c::U, x) where {T, U <: AbstractComponent{T}}
-
-Deterministic observation of state $x$.
-
-"""
-function observe(c::U, x) where {T, U <: AbstractComponent{T}}
-    (;H) = c
-    return H*x
-end
-
 @doc raw"""
 
     observe(c::U, x, P, R) where {T, U <: AbstractComponent{T}}

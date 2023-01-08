@@ -1,22 +1,5 @@
 @testset "seasonal" begin
-
-    @testset "transition deterministic" begin
-        drift_scale = 0.1
-        num_seasons = 4
-        season_length = 2
-        m = Seasonal(num_seasons, season_length, drift_scale)
-        x = Float64.(collect(1:4))
-        
-        x₁ = transition(m, x, season_length+1)
-        y₁ = observe(m, x₁)
-        @test only(y₁) == x₁[1] # observe first effect
-        @test x₁ == x[[2, 3, 4, 1]] # cycle seasons
-        
-        x₂ = transition(m, x, season_length)
-        y₂ = observe(m, x₂)
-        @test x₂ == x # do not cycle seasons
-    end
-    
+  
     @testset "transition probabilistic" begin
         drift_scale = 0.1
         num_seasons = 4

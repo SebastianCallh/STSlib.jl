@@ -14,30 +14,6 @@ num_params(c::Sum) = num_params(c.component1) + num_params(c.component2)
 
 @doc raw"""
 
-    function transition(c::Sum{T}, x::Vector, t::Integer) where T
-
-Deterministic transition of state $x$ for time step $t$.
-The time step parameter $t$ is forwarded to time dependent components.
-
-"""
-function transition(c::Sum{U, T}, x, t::V, params) where {U, T, V <: Integer}
-    size1 = latent_size(c.component1)
-    nparams1 = num_params(c.component1)
-
-    x1 = @view x[begin:size1]
-    x2 = @view x[size1+1:end]
-    params1 = @view params[begin:nparams1]
-    params2 = @view params[nparams1+1:end]
-
-    x1 = transition(c.component1, x1, t, params1)
-    x2 = transition(c.component2, x2, t, params2)
-    x = vcat(x1, x2)
-    return x
-end
-transition(c::Sum{U, T}, x, t::V) where {U, T, V <: Integer} = transition(c, x, t, SA{Float64}[])
-
-@doc raw"""
-
     function transition(c::Sum{T}, x::Vector, P::Matrix) where T
 
 Probabilistic transition of state with mean $x$ and covariance $P$ for time step $t$.

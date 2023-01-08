@@ -34,20 +34,6 @@ function _transition_mats(c::Seasonal{T}, t) where T
     return F, Q
 end
 
-
-@doc raw"""
-
-    function transition(c::Seasonal{T}, x::Vector{T}, t::Integer) where T
-
-Deterministic transition of state $x$ for time step $t$.
-
-"""
-function transition(c::Seasonal{T}, x, t::U) where {T, U <: Integer}
-    F, _ = _transition_mats(c, t)
-    return F*x
-end
-transition(c::Seasonal{T}, x, t::U, params) where {T, U <: Integer} = transition(c, x, t)
-
 @doc raw"""
 
     function transition(c::Seasonal{T}, x::Vector{T}, P::Matrix{T}, t::Integer) where T

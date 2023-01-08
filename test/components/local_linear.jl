@@ -1,17 +1,5 @@
 @testset "local_linear" begin
 
-    @testset "transition deterministic" begin
-        m = LocalLinear(1, 1)
-        x = [1., 2.]
-        
-        x₁ = transition(m, x)
-        y₁ = observe(m, x₁)
-        @test only(y₁) == x₁[1] # observe level
-        @test x₁ == [3., 2.]
-        @test eltype(x₁) == eltype(x)
-        @test eltype(y₁) == eltype(x)
-    end
-
     @testset "transition probabilistic" begin
         m = LocalLinear(1, 1)
         x = [1., 2.]
@@ -34,10 +22,6 @@
         P = diagm(ones(length(x)))
         R = [0.15;;]
         t = 1
-
-        x₁ = transition(m, x)
-        x₂ = transition(m, x, t)
-        @test x₁ == x₂
 
         x₁, P₁ = transition(m, x, P)
         x₂, P₂ = transition(m, x, P, t)

@@ -1,17 +1,5 @@
 @testset "local_linear" begin
 
-    @testset "transition deterministic" begin
-        m = SemiLocalLinear(1, 1)
-        x = [1., 2.]
-        params = [.5, 1]
-        x₁ = transition(m, x, params)
-        y₁ = observe(m, x₁)
-        @test only(y₁) == x₁[1] # observe level
-        @test x₁ == [3.5, 1.5]
-        @test eltype(x₁) == eltype(x)
-        @test eltype(y₁) == eltype(x)
-    end
-
     @testset "transition probabilistic" begin
         m = SemiLocalLinear(1, 1)
         x = [1., 2.]
