@@ -26,7 +26,7 @@ end
 
 num_params(c::Seasonal) = 0
 
-function _transition_mats(c::Seasonal{T}, t) where T
+function _transition_mats(c::Seasonal, t)
     (; F, Q, F_noop, Q_noop, season_length) = c
     new_season = mod(t-1, season_length) == 0 && 1 < t  
     F = new_season ? F : F_noop
@@ -41,10 +41,10 @@ end
 Probabilistic transition of state with mean $x$ and covariance $P$ for time step $t$.
 
 """
-function transition(c::Seasonal{T}, x, P, t) where T
+function transition(c::Seasonal, x, P, t)
     F, Q = _transition_mats(c, t)
     x = F*x
     P = F*P*F' + Q
     return x, P
 end
-transition(c::Seasonal{T}, x, P, t::U, params) where {T, U <: Integer} = transition(c, x, P, t)
+transition(c::Seasonal, x, P, t, params) = transition(c, x, P, t)

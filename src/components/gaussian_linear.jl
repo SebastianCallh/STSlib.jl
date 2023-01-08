@@ -26,11 +26,11 @@ num_params(c::GaussianLinear) = 0
 Probabilistic transition of state with mean $x$ and covariance $P$.
 
 """
-function transition(c::GaussianLinear{T}, x, P) where {T}
+function transition(c::GaussianLinear, x, P)
     (;F, b, Q) = c
     x = F*x + b
     P = F*P*F' + Q
     return x, P
 end
-transition(c::GaussianLinear{T}, x, P, t::V) where {T, V <: Integer} = transition(c, x, P)
-transition(c::GaussianLinear{T}, x, P, t::V, params) where {T, V <: Integer} = transition(c, x, P)
+transition(c::GaussianLinear, x, P, t) = transition(c, x, P)
+transition(c::GaussianLinear, x, P, t, params) = transition(c, x, P)

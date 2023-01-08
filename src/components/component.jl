@@ -1,7 +1,7 @@
 abstract type AbstractComponent{T <: AbstractFloat} end
 
-observation_matrix(c::U) where {T, U <: AbstractComponent{T}} = c.H
-latent_size(c::U) where {T, U <: AbstractComponent{T}} = size(c.H, 2)
+observation_matrix(c) = c.H
+latent_size(c) = size(c.H, 2)
 
 @doc raw"""
 
@@ -10,7 +10,7 @@ latent_size(c::U) where {T, U <: AbstractComponent{T}} = size(c.H, 2)
 Probabilistic observation of state with mean $x$, covariance $P$ and observation noise covariance $R$.
 
 """
-function observe(c::U, x, P, R) where {T, U <: AbstractComponent{T}}
+function observe(c, x, P, R)
     (;H) = c
     y = H*x
     S = H*P*H' + R
