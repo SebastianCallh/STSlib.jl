@@ -21,20 +21,6 @@ num_params(c::GaussianLinear) = 0
 
 @doc raw"""
 
-    transition(c::GaussianLinear{T}, x::Vector{T}) where T
-
-Deterministic transition of state $x$.
-
-"""
-function transition(c::GaussianLinear{T}, x) where {T}
-    (;F, b) = c
-    return F*x + b
-end
-transition(c::GaussianLinear{T}, x, t::V) where {T, V <: Integer} = transition(c, x)
-transition(c::GaussianLinear{T}, x, t::V, params) where {T, V <: Integer} = transition(c, x)
-
-@doc raw"""
-
     transition(c::GaussianLinear{T}, x::Vector{T}, P::Matrix{T}) where T
 
 Probabilistic transition of state with mean $x$ and covariance $P$.

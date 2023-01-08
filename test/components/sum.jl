@@ -23,15 +23,6 @@
         @test S == [3.1;;]
     end
 
-    @testset "transition deterministic" begin
-        m = LocalLevel(1) + Seasonal(3, 1, 1)
-        x = [1., 1., 2., 0.]
-        x₁ = transition(m, x, 1)
-        y₁ = observe(m, x₁)
-        @test only(y₁) == x₁[1] + x₁[2] # observe level plus season effect
-        @test x₁ == x # constant state        
-    end
-
     @testset "equality" begin
         m1 = LocalLinear(1, 1) + Seasonal(1, 1, 1)
         m2 = LocalLinear(2, 1)
@@ -74,9 +65,6 @@
         
         x = [1., 2., 0., 0., 1., 1.]
         P = diagm(ones(length(x)))
-        x₁ = transition(m, x, 1)
-        y₁ = observe(m, x₁)
-        @test only(y₁) == x₁[1] + x₁[2] + x₁[5]
 
         R = [0.1;;]
         x₁, P₁ = transition(m, x, P, 1)
