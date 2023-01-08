@@ -20,7 +20,7 @@ Probabilistic transition of state with mean $x$ and covariance $P$ for time step
 The time step parameter $t$ is forwarded to time dependent components.
 
 """
-function transition(c::Sum{U, T}, x, P, t::V, params) where {U, T, V <: Integer}
+function transition(c::Sum, x, P, t, params)
     size1 = latent_size(c.component1)
     nparams1 = num_params(c.component1)
     
@@ -37,4 +37,4 @@ function transition(c::Sum{U, T}, x, P, t::V, params) where {U, T, V <: Integer}
     P = blockdiagonal(P1, P2)
     return x, P
 end
-transition(c::Sum{U, T}, x, P, t::V) where {U, T, V <: Integer} = transition(c, x, P, t, SA{Float64}[])
+transition(c::Sum, x, P, t) = transition(c, x, P, t, SA{typeof(x)}[])
